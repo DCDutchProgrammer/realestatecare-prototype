@@ -1,21 +1,27 @@
 <template>
   <ion-page>
     <ion-tabs>
-      <ion-router-outlet></ion-router-outlet>
+      <ion-router-outlet />
+
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="tab1" href="/tabs/tab1">
-          <ion-icon aria-hidden="true" :icon="triangle" />
-          <ion-label>Tab 1</ion-label>
+        <ion-tab-button tab="dashboard" href="/tabs/dashboard">
+          <ion-icon :icon="gridOutline" />
+          <ion-label>Dashboard</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab2" href="/tabs/tab2">
-          <ion-icon aria-hidden="true" :icon="ellipse" />
-          <ion-label>Tab 2</ion-label>
+        <ion-tab-button tab="assigned" href="/tabs/assigned">
+          <ion-icon :icon="documentTextOutline" />
+          <ion-label>Toegewezen</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab3" href="/tabs/tab3">
-          <ion-icon aria-hidden="true" :icon="square" />
-          <ion-label>Tab 3</ion-label>
+        <ion-tab-button tab="knowledge" href="/tabs/knowledge">
+          <ion-icon :icon="bookOutline" />
+          <ion-label>Kennisbase</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="settings" href="/tabs/settings">
+          <ion-icon :icon="settingsOutline" />
+          <ion-label>Instellingen</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
@@ -23,6 +29,20 @@
 </template>
 
 <script setup lang="ts">
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import {
+  IonPage,
+  IonTabs,
+  IonRouterOutlet,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel
+} from '@ionic/vue'
+
+import {
+  gridOutline,
+  documentTextOutline,
+  bookOutline,
+  settingsOutline
+} from 'ionicons/icons'
 </script>

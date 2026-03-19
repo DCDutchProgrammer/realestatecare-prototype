@@ -1,2 +1,61 @@
-/* For information on how to create your own theme, please refer to:
-http://ionicframework.com/docs/theming/ */
+:root {
+  --ion-color-primary: #1fb7b0;
+  --ion-color-primary-rgb: 31, 183, 176;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #1ba19b;
+  --ion-color-primary-tint: #35c0b9;
+
+  --ion-color-secondary: #223640;
+  --ion-color-secondary-rgb: 34, 54, 64;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #1e3038;
+  --ion-color-secondary-tint: #384a53;
+
+  --ion-color-light: #f2f4f5;
+  --ion-color-light-rgb: 242, 244, 245;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d5d7d8;
+  --ion-color-light-tint: #f3f5f6;
+
+  --rec-bg: #eef2f3;
+  --rec-card: #ffffff;
+  --rec-text: #20323d;
+  --rec-muted: #6e7d86;
+  --rec-border: #dbe4e7;
+  --rec-gradient: linear-gradient(135deg, #40616f 0%, #0d1d26 100%);
+}
+
+body {
+  background: var(--rec-bg);
+  color: var(--rec-text);
+}
+
+ion-content {
+  --background: var(--rec-bg);
+}
+
+.rec-page-padding {
+  padding: 16px;
+}
+
+.rec-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: var(--rec-text);
+}
+
+.rec-subtitle {
+  color: var(--rec-muted);
+  font-size: 0.92rem;
+}
+
+.rec-card {
+  background: var(--rec-card);
+  border: 1px solid var(--rec-border);
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+}

@@ -1,11 +1,21 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage.vue'
+import { createRouter, createWebHistory } from '@ionic/vue-router'
 
-const routes: Array<RouteRecordRaw> = [
+import LoginPage from '@/views/LoginPage.vue'
+import TabsPage from '@/views/TabsPage.vue'
+import DashboardPage from '@/views/DashboardPage.vue'
+import AssignedReportsPage from '@/views/AssignedReportsPage.vue'
+import CompletedReportsPage from '@/views/CompletedReportsPage.vue'
+import KnowledgeBasePage from '@/views/KnowledgeBasePage.vue'
+import SettingsPage from '@/views/SettingsPage.vue'
+
+const routes = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    component: LoginPage
   },
   {
     path: '/tabs/',
@@ -13,19 +23,27 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/tabs/dashboard'
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue')
+        path: 'dashboard',
+        component: DashboardPage
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue')
+        path: 'assigned',
+        component: AssignedReportsPage
       },
       {
-        path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue')
+        path: 'completed',
+        component: CompletedReportsPage
+      },
+      {
+        path: 'knowledge',
+        component: KnowledgeBasePage
+      },
+      {
+        path: 'settings',
+        component: SettingsPage
       }
     ]
   }
@@ -34,6 +52,18 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, _from, next) => {
+  const isLoggedIn = localStorage.getItem('rec_logged_in') === 'true'
+
+  if (to.path.startsWith('/tabs') && !isLoggedIn) {
+    next('/login')
+  } else if (to.path === '/login' && isLoggedIn) {
+    next('/tabs/dashboard')
+  } else {
+    next()
+  }
 })
 
 export default router
