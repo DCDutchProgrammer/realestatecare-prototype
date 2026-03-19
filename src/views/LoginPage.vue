@@ -122,6 +122,7 @@ const login = async () => {
 .input-item {
   --background: #f8fafb;
   --border-radius: 14px;
+  color: black;
   margin-bottom: 14px;
   border: 1px solid var(--rec-border);
 }
@@ -135,7 +136,7 @@ const login = async () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  color: var(--rec-muted);
+  color: black;
   font-size: 0.9rem;
 }
 </style>
