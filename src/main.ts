@@ -18,6 +18,9 @@ import '@ionic/vue/css/display.css'
 
 import './theme/variables.css'
 
+const savedDarkMode = localStorage.getItem('rec_dark_mode') === 'true'
+document.body.classList.toggle('dark', savedDarkMode)
+
 const app = createApp(App)
 const pinia = createPinia()
 
