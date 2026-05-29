@@ -1,50 +1,41 @@
 <template>
   <ion-page>
     <AppHeader
-      title="Toegewezen rapportages"
-      subtitle="Openstaande inspecties op locatie"
+      title="Openstaande inspecties"
+      subtitle="Toegewezen rapportages op locatie"
     />
 
     <ion-content>
       <div class="rec-page-padding">
         <ion-list inset>
-          <ion-item button detail>
-            <ion-icon :icon="homeOutline" slot="start" color="primary" />
-            <ion-label>
-              <h2>Pand - Arnhem 12A</h2>
-              <p>Inspectiedoelen: schade, onderhoud</p>
-            </ion-label>
-            <ion-badge color="danger">Nieuw</ion-badge>
-          </ion-item>
+          <ion-item
+            v-for="inspection in openInspections"
+            :key="inspection.id"
+            button
+            detail
+            @click="openInspection(inspection.id)"
+          >
+            <ion-icon
+              :icon="documentTextOutline"
+              slot="start"
+              color="primary"
+            />
 
-          <ion-item button detail>
-            <ion-icon :icon="businessOutline" slot="start" color="primary" />
             <ion-label>
-              <h2>Complex - Nijmegen West</h2>
-              <p>Inspectiedoelen: installaties, modificaties</p>
+              <h2>{{ inspection.title }}</h2>
+              <p>{{ inspection.address }}</p>
+              <p>Prioriteit: {{ inspection.priority }}</p>
             </ion-label>
-          </ion-item>
 
-          <ion-item button detail>
-            <ion-icon :icon="constructOutline" slot="start" color="primary" />
-            <ion-label>
-              <h2>Woning - Eindhoven 44</h2>
-              <p>Inspectiedoelen: achterstallig onderhoud</p>
-            </ion-label>
+            <ion-badge color="danger">
+              Open
+            </ion-badge>
           </ion-item>
         </ion-list>
 
-        <ion-card class="info-card">
-          <ion-card-header>
-            <ion-card-title>Inspectie-onderdelen</ion-card-title>
-          </ion-card-header>
+        <ion-card v-if="openInspections.length === 0">
           <ion-card-content>
-            <ul>
-              <li>Schade opnemen</li>
-              <li>Achterstallig onderhoud opnemen</li>
-              <li>Technische installaties inspecteren</li>
-              <li>Modificaties inventariseren</li>
-            </ul>
+            Er zijn geen openstaande inspecties gevonden.
           </ion-card-content>
         </ion-card>
       </div>
@@ -53,6 +44,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   IonPage,
   IonContent,
@@ -62,23 +55,26 @@ import {
   IonIcon,
   IonBadge,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent
 } from '@ionic/vue'
-import { homeOutline, businessOutline, constructOutline } from 'ionicons/icons'
+
+import { documentTextOutline } from 'ionicons/icons'
+
 import AppHeader from '@/components/AppHeader.vue'
+import { useInspectionStore } from '@/stores/inspectionStore'
+
+const router = useRouter()
+const store = useInspectionStore()
+
+onMounted(() => {
+  store.loadInspections()
+})
+
+const openInspections = computed(() => {
+  return store.openInspections
+})
+
+const openInspection = (id: number) => {
+  router.push(`/tabs/inspection/${id}`)
+}
 </script>
-
-<style scoped>
-.info-card {
-  margin-top: 18px;
-  border-radius: 18px;
-}
-
-ul {
-  margin: 0;
-  padding-left: 18px;
-  color: var(--rec-text);
-}
-</style>

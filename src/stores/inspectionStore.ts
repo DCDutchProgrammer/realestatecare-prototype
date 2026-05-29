@@ -20,8 +20,55 @@ export const useInspectionStore = defineStore('inspectionStore', {
   actions: {
     async loadInspections() {
       this.loading = true
-      this.inspections = await getInspections()
-      this.loading = false
+
+      try {
+        const savedInspections = localStorage.getItem('rec_inspections')
+
+        if (savedInspections) {
+          this.inspections = JSON.parse(savedInspections)
+        } else {
+          this.inspections = await getInspections()
+          this.saveInspections()
+        }
+      } catch (error) {
+        console.error('Fout bij laden van inspecties:', error)
+
+        this.inspections = await getInspections()
+        this.saveInspections()
+      } finally {
+        this.loading = false
+      }
+    },
+
+    saveInspections() {
+      localStorage.setItem('rec_inspections', JSON.stringify(this.inspections))
+    },
+
+    completeInspection(id: number) {
+      const inspection = this.inspections.find((item) => item.id === id)
+
+      if (!inspection) {
+        return
+      }
+
+      inspection.status = 'completed'
+      this.saveInspections()
+    },
+
+    reopenInspection(id: number) {
+      const inspection = this.inspections.find((item) => item.id === id)
+
+      if (!inspection) {
+        return
+      }
+
+      inspection.status = 'open'
+      this.saveInspections()
+    },
+
+    resetInspections() {
+      localStorage.removeItem('rec_inspections')
+      this.inspections = []
     }
   }
 })

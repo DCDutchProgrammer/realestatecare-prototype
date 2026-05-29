@@ -22,12 +22,45 @@
     "status": "completed",
     "priority": "Normaal",
     "inspectionGoals": ["Technische installaties inspecteren"],
-    "installation": {
+    "damage": {
       "location": "CV-ruimte",
-      "type": "verwarming",
-      "reportedIssues": "Onregelmatige storing gemeld.",
-      "approved": true,
-      "remarks": "Installatie functioneert na reset correct."
+      "newDamage": false,
+      "type": "anders",
+      "date": "2026-05-18",
+      "urgentAction": false,
+      "description": "Technische installatie gecontroleerd."
+    }
+  },
+  {
+    "id": 3,
+    "title": "Woning Rotterdam 18B",
+    "address": "Rotterdam 18B",
+    "status": "open",
+    "priority": "Normaal",
+    "inspectionGoals": ["Schade opnemen", "Technische installaties inspecteren"],
+    "damage": {
+      "location": "Badkamer",
+      "newDamage": true,
+      "type": "anders",
+      "date": "2026-05-29",
+      "urgentAction": false,
+      "description": "Vochtplekken bij plafond en wand."
+    }
+  },
+  {
+    "id": 4,
+    "title": "Appartement Utrecht 7C",
+    "address": "Utrecht 7C",
+    "status": "open",
+    "priority": "Hoog",
+    "inspectionGoals": ["Achterstallig onderhoud opnemen", "Modificaties inventariseren"],
+    "damage": {
+      "location": "Keuken",
+      "newDamage": true,
+      "type": "normaal gebruik",
+      "date": "2026-05-29",
+      "urgentAction": true,
+      "description": "Loszittende kast en lekkage onder spoelbak."
     }
   }
 ]

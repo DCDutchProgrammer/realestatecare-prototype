@@ -60,6 +60,7 @@ ion-content {
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
+/* DARK MODE */
 body.dark {
   --ion-background-color: #121f26;
   --ion-text-color: #ffffff;
@@ -67,7 +68,7 @@ body.dark {
   --rec-bg: #121f26;
   --rec-card: #1d2d36;
   --rec-text: #ffffff;
-  --rec-muted: #b8c5cc;
+  --rec-muted: #d4dde2;
   --rec-border: #314650;
 
   background: var(--rec-bg);
@@ -90,19 +91,36 @@ body.dark .login-card {
 body.dark ion-item {
   --background: var(--rec-card);
   --color: var(--rec-text);
+  --border-color: var(--rec-border);
 }
 
 body.dark ion-label,
+body.dark ion-card-title,
+body.dark ion-card-subtitle,
 body.dark h1,
 body.dark h2,
 body.dark h3,
-body.dark p {
-  color: var(--rec-text);
+body.dark p,
+body.dark .rec-section-title {
+  color: var(--rec-text) !important;
 }
 
 body.dark .rec-subtitle,
 body.dark .brand-subtitle {
-  color: var(--rec-muted);
+  color: var(--rec-muted) !important;
+}
+
+body.dark ion-button.back-button,
+body.dark .back-button {
+  --color: #ffffff;
+  color: #ffffff !important;
+}
+
+body.dark ion-input,
+body.dark ion-textarea,
+body.dark ion-select {
+  --color: #ffffff;
+  --placeholder-color: #d4dde2;
 }
 
 body.dark .input-item {
@@ -114,4 +132,9 @@ body.dark .demo-box {
   background: #243741;
   border-color: var(--rec-border);
   color: var(--rec-muted);
+}
+
+body.dark ion-item-divider {
+  --background: #121f26;
+  --color: #ffffff;
 }
