@@ -3,19 +3,22 @@
     <ion-card-content>
       <div class="status-grid">
         <div class="status-item">
-          <strong>3</strong>
+          <strong>{{ openCount }}</strong>
           <span>Open taken</span>
         </div>
+
         <div class="status-item">
-          <strong>2</strong>
+          <strong>{{ completedCount }}</strong>
           <span>Vandaag afgerond</span>
         </div>
+
         <div class="status-item">
-          <strong>1</strong>
+          <strong>{{ offlineCount }}</strong>
           <span>Offline opgeslagen</span>
         </div>
+
         <div class="status-item">
-          <strong>Actief</strong>
+          <strong>{{ syncStatus }}</strong>
           <span>Synchronisatie</span>
         </div>
       </div>
@@ -25,6 +28,13 @@
 
 <script setup lang="ts">
 import { IonCard, IonCardContent } from '@ionic/vue'
+
+defineProps<{
+  openCount: number
+  completedCount: number
+  offlineCount: number
+  syncStatus: string
+}>()
 </script>
 
 <style scoped>
@@ -32,7 +42,7 @@ import { IonCard, IonCardContent } from '@ionic/vue'
   margin: 0;
   border-radius: 18px;
   background: var(--rec-gradient);
-  color: #fff;
+  color: #ffffff;
 }
 
 .status-grid {
@@ -49,10 +59,12 @@ import { IonCard, IonCardContent } from '@ionic/vue'
 .status-item strong {
   font-size: 1.1rem;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .status-item span {
   font-size: 0.82rem;
   opacity: 0.9;
+  color: #ffffff;
 }
 </style>

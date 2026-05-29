@@ -25,7 +25,12 @@
           </div>
         </section>
 
-        <StatusOverview />
+        <StatusOverview
+          :open-count="openInspectionCount"
+          :completed-count="completedInspectionCount"
+          :offline-count="offlineDraftCount"
+          :sync-status="syncStatus"
+        />
 
         <section class="cards-section">
           <h3 class="rec-section-title">Hoofdfuncties</h3>
@@ -102,6 +107,16 @@ const openInspectionCount = computed(() => {
 
 const completedInspectionCount = computed(() => {
   return store.completedInspections.length
+})
+
+const offlineDraftCount = computed(() => {
+  return store.inspections.filter((inspection) => {
+    return localStorage.getItem(`inspection_${inspection.id}`)
+  }).length
+})
+
+const syncStatus = computed(() => {
+  return offlineDraftCount.value > 0 ? 'Wachtend' : 'Actief'
 })
 
 const goTo = (path: string) => {
