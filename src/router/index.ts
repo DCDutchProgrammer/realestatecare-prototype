@@ -64,8 +64,6 @@ router.beforeEach((to, _from, next) => {
 
   if (to.path.startsWith('/tabs') && !isLoggedIn) {
     next('/login')
-  } else if (to.path === '/login' && isLoggedIn) {
-    next('/tabs/dashboard')
   } else {
     next()
   }
