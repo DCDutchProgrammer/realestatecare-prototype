@@ -1,0 +1,33 @@
+[
+  {
+    "id": 1,
+    "title": "Pand Arnhem 12A",
+    "address": "Arnhem 12A",
+    "status": "open",
+    "priority": "Hoog",
+    "inspectionGoals": ["Schade opnemen", "Achterstallig onderhoud opnemen"],
+    "damage": {
+      "location": "Woonkamer",
+      "newDamage": true,
+      "type": "slijtage",
+      "date": "2026-05-19",
+      "urgentAction": false,
+      "description": "Scheurvorming zichtbaar bij binnenmuur."
+    }
+  },
+  {
+    "id": 2,
+    "title": "Complex Nijmegen West",
+    "address": "Nijmegen West",
+    "status": "completed",
+    "priority": "Normaal",
+    "inspectionGoals": ["Technische installaties inspecteren"],
+    "installation": {
+      "location": "CV-ruimte",
+      "type": "verwarming",
+      "reportedIssues": "Onregelmatige storing gemeld.",
+      "approved": true,
+      "remarks": "Installatie functioneert na reset correct."
+    }
+  }
+]

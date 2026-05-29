@@ -7,6 +7,7 @@ import AssignedReportsPage from '@/views/AssignedReportsPage.vue'
 import CompletedReportsPage from '@/views/CompletedReportsPage.vue'
 import KnowledgeBasePage from '@/views/KnowledgeBasePage.vue'
 import SettingsPage from '@/views/SettingsPage.vue'
+import InspectionDetailPage from '@/views/InspectionDetailPage.vue'
 
 const routes = [
   {
@@ -44,6 +45,10 @@ const routes = [
       {
         path: 'settings',
         component: SettingsPage
+      },
+      {
+        path: 'inspection/:id',
+        component: InspectionDetailPage
       }
     ]
   }
