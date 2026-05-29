@@ -12,7 +12,8 @@
             <div>
               <h2>Goedemorgen, {{ username }}</h2>
               <p class="rec-subtitle">
-                Je hebt vandaag 3 open rapportages en 1 item dat offline is opgeslagen.
+                Je hebt vandaag {{ openInspectionCount }} open rapportage(s)
+                en {{ completedInspectionCount }} uitgevoerde rapportage(s).
               </p>
             </div>
 
@@ -34,7 +35,7 @@
               title="Toegewezen rapportages"
               description="Open nieuwe inspecties en werk rapportages stap voor stap af."
               :icon="documentTextOutline"
-              :badge="3"
+              :badge="openInspectionCount"
               @select="goTo('/tabs/assigned')"
             />
 
@@ -42,6 +43,7 @@
               title="Uitgevoerde rapportages"
               description="Bekijk eerder ingevulde rapportages en pas gegevens aan."
               :icon="checkmarkDoneOutline"
+              :badge="completedInspectionCount"
               @select="goTo('/tabs/completed')"
             />
 
@@ -66,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { IonPage, IonContent } from '@ionic/vue'
 import {
@@ -79,12 +81,27 @@ import {
 import AppHeader from '@/components/AppHeader.vue'
 import DashboardCard from '@/components/DashboardCard.vue'
 import StatusOverview from '@/components/StatusOverview.vue'
+import { useInspectionStore } from '@/stores/inspectionStore'
+
 import logoBluePath from '@/assets/logo-blauw.png'
 
 const router = useRouter()
+const store = useInspectionStore()
+
+onMounted(() => {
+  store.loadInspections()
+})
 
 const username = computed(() => {
   return localStorage.getItem('rec_user') || 'Inspecteur'
+})
+
+const openInspectionCount = computed(() => {
+  return store.openInspections.length
+})
+
+const completedInspectionCount = computed(() => {
+  return store.completedInspections.length
 })
 
 const goTo = (path: string) => {
