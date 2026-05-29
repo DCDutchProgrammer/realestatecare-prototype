@@ -346,7 +346,7 @@ const goBack = () => {
 }
 
 ion-card {
-  border-radius: 18px;
+  border-radius: 18px;  
 }
 
 ion-item-divider {

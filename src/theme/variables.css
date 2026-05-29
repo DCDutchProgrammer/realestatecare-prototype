@@ -60,6 +60,35 @@ ion-content {
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
+
+/* Ion Select Dark Mode */
+body.dark ion-select {
+  --color: #ffffff;
+  color: #ffffff;
+}
+
+body.dark ion-select::part(text) {
+  color: #ffffff;
+}
+
+/* Popup die opent bij select */
+body.dark .alert-wrapper {
+  background: #1d2d36 !important;
+}
+
+body.dark .alert-title {
+  color: #ffffff !important;
+}
+
+body.dark .alert-radio-label {
+  color: #ffffff !important;
+}
+
+body.dark .alert-button {
+  color: var(--ion-color-primary) !important;
+}
+
+
 /* DARK MODE */
 body.dark {
   --ion-background-color: #121f26;
@@ -137,4 +166,27 @@ body.dark .demo-box {
 body.dark ion-item-divider {
   --background: #121f26;
   --color: #ffffff;
+}
+
+/* Popover in dark mode */
+body.dark ion-popover {
+  --background: #1d2d36;
+}
+
+body.dark ion-popover ion-content {
+  --background: #1d2d36;
+}
+
+body.dark ion-popover ion-list,
+body.dark ion-popover ion-list-header,
+body.dark ion-popover ion-item {
+  background: #1d2d36;
+  --background: #1d2d36;
+  color: #ffffff;
+}
+
+body.dark ion-popover ion-label,
+body.dark ion-popover h2,
+body.dark ion-popover p {
+  color: #ffffff !important;
 }
