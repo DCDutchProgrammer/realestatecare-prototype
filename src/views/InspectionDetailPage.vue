@@ -71,6 +71,7 @@
                 <ion-select
                   v-model="damageType"
                   placeholder="Kies soort schade"
+                  interface="alert"
                 >
                   <ion-select-option value="moedwillig">Moedwillig</ion-select-option>
                   <ion-select-option value="slijtage">Slijtage</ion-select-option>
@@ -82,12 +83,34 @@
               </ion-item>
 
               <ion-item>
-                <ion-label position="stacked">Datum inspectie</ion-label>
-                <ion-input
-                  v-model="inspectionDate"
-                  type="date"
-                />
+                <ion-label>
+                  <h2>Datum inspectie</h2>
+                  <p>{{ inspectionDate || 'Geen datum gekozen' }}</p>
+                </ion-label>
+
+                <ion-button fill="outline" size="small" @click="openDateModal">
+                  Kies datum
+                </ion-button>
               </ion-item>
+
+              <ion-modal :is-open="isDateModalOpen" @didDismiss="closeDateModal">
+                <ion-content class="date-modal-content">
+                  <ion-datetime
+                    :value="inspectionDate"
+                    presentation="date"
+                    locale="nl-NL"
+                    @ionChange="updateInspectionDate"
+                  />
+
+                  <ion-button
+                    expand="block"
+                    class="date-close-button"
+                    @click="closeDateModal"
+                  >
+                    Datum bevestigen
+                  </ion-button>
+                </ion-content>
+              </ion-modal>
 
               <ion-item>
                 <ion-label>
@@ -159,7 +182,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   IonPage,
@@ -180,6 +203,8 @@ import {
   IonToggle,
   IonButton,
   IonBadge,
+  IonDatetime,
+  IonModal,
   toastController
 } from '@ionic/vue'
 
@@ -199,9 +224,14 @@ const newDamage = ref(false)
 const urgentAction = ref(false)
 const description = ref('')
 const photos = ref<string[]>([])
+const isDateModalOpen = ref(false)
+
+const inspectionId = computed(() => {
+  return Number(route.params.id)
+})
 
 const inspection = computed(() => {
-  return store.inspections.find((item) => item.id === Number(route.params.id))
+  return store.inspections.find((item) => item.id === inspectionId.value)
 })
 
 const priorityColor = computed(() => {
@@ -218,16 +248,49 @@ const priorityColor = computed(() => {
   return 'medium'
 })
 
+const formatDate = (value: unknown) => {
+  if (!value || typeof value !== 'string') {
+    return ''
+  }
+
+  return value.split('T')[0]
+}
+
 onMounted(async () => {
+  await prepareInspection()
+})
+
+watch(
+  () => route.params.id,
+  async () => {
+    await prepareInspection()
+  }
+)
+
+const prepareInspection = async () => {
+  loading.value = true
+
   if (store.inspections.length === 0) {
     await store.loadInspections()
   }
 
+  resetForm()
   loadInspectionData()
   loadLocalDraft()
 
   loading.value = false
-})
+}
+
+const resetForm = () => {
+  damageLocation.value = ''
+  damageType.value = ''
+  inspectionDate.value = ''
+  newDamage.value = false
+  urgentAction.value = false
+  description.value = ''
+  photos.value = []
+  isDateModalOpen.value = false
+}
 
 const loadInspectionData = () => {
   if (!inspection.value?.damage) {
@@ -236,14 +299,15 @@ const loadInspectionData = () => {
 
   damageLocation.value = inspection.value.damage.location || ''
   damageType.value = inspection.value.damage.type || ''
-  inspectionDate.value = inspection.value.damage.date || ''
+  inspectionDate.value = formatDate(inspection.value.damage.date)
   newDamage.value = inspection.value.damage.newDamage || false
   urgentAction.value = inspection.value.damage.urgentAction || false
   description.value = inspection.value.damage.description || ''
+  photos.value = inspection.value.photos || []
 }
 
 const loadLocalDraft = () => {
-  const savedDraft = localStorage.getItem(`inspection_${route.params.id}`)
+  const savedDraft = localStorage.getItem(`inspection_${inspectionId.value}`)
 
   if (!savedDraft) {
     return
@@ -253,11 +317,23 @@ const loadLocalDraft = () => {
 
   damageLocation.value = parsedDraft.damageLocation || damageLocation.value
   damageType.value = parsedDraft.damageType || damageType.value
-  inspectionDate.value = parsedDraft.inspectionDate || inspectionDate.value
+  inspectionDate.value = formatDate(parsedDraft.inspectionDate) || inspectionDate.value
   newDamage.value = parsedDraft.newDamage ?? newDamage.value
   urgentAction.value = parsedDraft.urgentAction ?? urgentAction.value
   description.value = parsedDraft.description || description.value
-  photos.value = parsedDraft.photos || []
+  photos.value = parsedDraft.photos || photos.value
+}
+
+const openDateModal = () => {
+  isDateModalOpen.value = true
+}
+
+const closeDateModal = () => {
+  isDateModalOpen.value = false
+}
+
+const updateInspectionDate = (event: CustomEvent) => {
+  inspectionDate.value = formatDate(event.detail.value)
 }
 
 const addPhoto = async () => {
@@ -275,18 +351,39 @@ const addPhoto = async () => {
 }
 
 const saveInspection = async () => {
+  const cleanDate = formatDate(inspectionDate.value)
+
+  const currentInspection = store.inspections.find((item) => item.id === inspectionId.value)
+
+  if (currentInspection) {
+    currentInspection.damage = {
+      ...(currentInspection.damage || {}),
+      location: damageLocation.value,
+      type: damageType.value,
+      date: cleanDate,
+      newDamage: newDamage.value,
+      urgentAction: urgentAction.value,
+      description: description.value
+    }
+
+    currentInspection.photos = photos.value
+    store.saveInspections()
+  }
+
   localStorage.setItem(
-    `inspection_${route.params.id}`,
+    `inspection_${inspectionId.value}`,
     JSON.stringify({
       damageLocation: damageLocation.value,
       damageType: damageType.value,
-      inspectionDate: inspectionDate.value,
+      inspectionDate: cleanDate,
       newDamage: newDamage.value,
       urgentAction: urgentAction.value,
       description: description.value,
       photos: photos.value
     })
   )
+
+  inspectionDate.value = cleanDate
 
   const toast = await toastController.create({
     message: 'Rapportage lokaal opgeslagen.',
@@ -301,7 +398,7 @@ const saveInspection = async () => {
 const completeInspection = async () => {
   await saveInspection()
 
-  store.completeInspection(Number(route.params.id))
+  store.completeInspection(inspectionId.value)
 
   const toast = await toastController.create({
     message: 'Inspectie afgerond en verplaatst naar uitgevoerde inspecties.',
@@ -316,7 +413,9 @@ const completeInspection = async () => {
 }
 
 const reopenInspection = async () => {
-  store.reopenInspection(Number(route.params.id))
+  await saveInspection()
+
+  store.reopenInspection(inspectionId.value)
 
   const toast = await toastController.create({
     message: 'Inspectie teruggezet naar openstaande inspecties.',
@@ -346,7 +445,7 @@ const goBack = () => {
 }
 
 ion-card {
-  border-radius: 18px;  
+  border-radius: 18px;
 }
 
 ion-item-divider {
@@ -354,5 +453,14 @@ ion-item-divider {
   --background: var(--rec-bg);
   --color: var(--rec-text);
   font-weight: 700;
+}
+
+.date-modal-content {
+  --background: var(--rec-bg);
+  padding: 16px;
+}
+
+.date-close-button {
+  margin: 16px;
 }
 </style>
