@@ -256,6 +256,17 @@ const formatDate = (value: unknown) => {
   return value.split('T')[0]
 }
 
+const parseStoredDraft = (savedDraft: string) => {
+  try {
+    return JSON.parse(savedDraft)
+  } catch (error) {
+    console.error('Fout bij lezen van lokaal opgeslagen concept:', error)
+    return null
+  }
+}
+
+
+
 onMounted(async () => {
   await prepareInspection()
 })
@@ -307,21 +318,29 @@ const loadInspectionData = () => {
 }
 
 const loadLocalDraft = () => {
-  const savedDraft = localStorage.getItem(`inspection_${inspectionId.value}`)
+  try {
+    const savedDraft = localStorage.getItem(`inspection_${inspectionId.value}`)
 
-  if (!savedDraft) {
-    return
+    if (!savedDraft) {
+      return
+    }
+
+    const parsedDraft = parseStoredDraft(savedDraft)
+
+    if (!parsedDraft) {
+      return
+    }
+
+    damageLocation.value = parsedDraft.damageLocation || damageLocation.value
+    damageType.value = parsedDraft.damageType || damageType.value
+    inspectionDate.value = formatDate(parsedDraft.inspectionDate) || inspectionDate.value
+    newDamage.value = parsedDraft.newDamage ?? newDamage.value
+    urgentAction.value = parsedDraft.urgentAction ?? urgentAction.value
+    description.value = parsedDraft.description || description.value
+    photos.value = parsedDraft.photos || photos.value
+  } catch (error) {
+    console.error('Fout bij laden van conceptgegevens:', error)
   }
-
-  const parsedDraft = JSON.parse(savedDraft)
-
-  damageLocation.value = parsedDraft.damageLocation || damageLocation.value
-  damageType.value = parsedDraft.damageType || damageType.value
-  inspectionDate.value = formatDate(parsedDraft.inspectionDate) || inspectionDate.value
-  newDamage.value = parsedDraft.newDamage ?? newDamage.value
-  urgentAction.value = parsedDraft.urgentAction ?? urgentAction.value
-  description.value = parsedDraft.description || description.value
-  photos.value = parsedDraft.photos || photos.value
 }
 
 const openDateModal = () => {
@@ -351,11 +370,15 @@ const addPhoto = async () => {
 }
 
 const saveInspection = async () => {
-  const cleanDate = formatDate(inspectionDate.value)
+  try {
+    const cleanDate = formatDate(inspectionDate.value)
 
-  const currentInspection = store.inspections.find((item) => item.id === inspectionId.value)
+    const currentInspection = store.inspections.find((item) => item.id === inspectionId.value)
 
-  if (currentInspection) {
+    if (!currentInspection) {
+      throw new Error('Inspectie niet gevonden.')
+    }
+
     currentInspection.damage = {
       ...(currentInspection.damage || {}),
       location: damageLocation.value,
@@ -368,65 +391,84 @@ const saveInspection = async () => {
 
     currentInspection.photos = photos.value
     store.saveInspections()
-  }
 
-  localStorage.setItem(
-    `inspection_${inspectionId.value}`,
-    JSON.stringify({
-      damageLocation: damageLocation.value,
-      damageType: damageType.value,
-      inspectionDate: cleanDate,
-      newDamage: newDamage.value,
-      urgentAction: urgentAction.value,
-      description: description.value,
-      photos: photos.value
+    localStorage.setItem(
+      `inspection_${inspectionId.value}`,
+      JSON.stringify({
+        damageLocation: damageLocation.value,
+        damageType: damageType.value,
+        inspectionDate: cleanDate,
+        newDamage: newDamage.value,
+        urgentAction: urgentAction.value,
+        description: description.value,
+        photos: photos.value
+      })
+    )
+
+    inspectionDate.value = cleanDate
+
+    const toast = await toastController.create({
+      message: 'Rapportage lokaal opgeslagen.',
+      duration: 2000,
+      color: 'success',
+      position: 'top'
     })
-  )
 
-  inspectionDate.value = cleanDate
+    await toast.present()
+  } catch (error) {
+    console.error('Fout bij opslaan van rapportage:', error)
 
-  const toast = await toastController.create({
-    message: 'Rapportage lokaal opgeslagen.',
-    duration: 2000,
-    color: 'success',
-    position: 'top'
-  })
+    const toast = await toastController.create({
+      message: 'Rapportage kon niet worden opgeslagen.',
+      duration: 2500,
+      color: 'danger',
+      position: 'top'
+    })
 
-  await toast.present()
+    await toast.present()
+  }
 }
 
 const completeInspection = async () => {
-  await saveInspection()
+  try {
+    await saveInspection()
 
-  store.completeInspection(inspectionId.value)
+    store.completeInspection(inspectionId.value)
 
-  const toast = await toastController.create({
-    message: 'Inspectie afgerond en verplaatst naar uitgevoerde inspecties.',
-    duration: 2500,
-    color: 'success',
-    position: 'top'
-  })
+    const toast = await toastController.create({
+      message: 'Inspectie afgerond en verplaatst naar uitgevoerde inspecties.',
+      duration: 2500,
+      color: 'success',
+      position: 'top'
+    })
 
-  await toast.present()
+    await toast.present()
 
-  router.push('/tabs/completed')
+    router.push('/tabs/completed')
+  } catch (error) {
+    console.error('Fout bij afronden van inspectie:', error)
+  }
 }
 
 const reopenInspection = async () => {
-  await saveInspection()
+  try {
+    await saveInspection()
 
-  store.reopenInspection(inspectionId.value)
+    store.reopenInspection(inspectionId.value)
 
-  const toast = await toastController.create({
-    message: 'Inspectie teruggezet naar openstaande inspecties.',
-    duration: 2500,
-    color: 'warning',
-    position: 'top'
-  })
+    const toast = await toastController.create({
+      message: 'Inspectie teruggezet naar openstaande inspecties.',
+      duration: 2500,
+      color: 'warning',
+      position: 'top'
+    })
 
-  await toast.present()
+    await toast.present()
 
-  router.push('/tabs/assigned')
+    router.push('/tabs/assigned')
+  } catch (error) {
+    console.error('Fout bij terugzetten van inspectie:', error)
+  }
 }
 
 const goBack = () => {
